@@ -5,7 +5,7 @@ import FavoritesPage from './FavoritesPage.jsx';
 import CatalogPage from './CatalogPage.jsx';
 
 function readRoute() {
-  let pathname = window.location.pathname.replace(/\\/+$/, '') || '/';
+  let pathname = window.location.pathname.replace(/\/+$/, '') || '/';
 
   // Совместимость со старыми закладками вида /#/catalog и /#/favorites.
   if (pathname === '/' && window.location.hash.startsWith('#/')) {

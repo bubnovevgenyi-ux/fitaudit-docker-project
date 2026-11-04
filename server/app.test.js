@@ -300,6 +300,7 @@ test('GET /api/catalog returns stored products and supports search', async () =>
     const data = await response.json();
     assert.equal(data.total, 2);
     assert.equal(data.items.length, 2);
+    assert.equal(data.items.find((item) => item.id === '190316').fiber, 0);
 
     const search = await fetch(`${baseUrl}/api/catalog?q=${encodeURIComponent('творог')}`);
     const searchData = await search.json();

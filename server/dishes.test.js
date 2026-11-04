@@ -7,7 +7,7 @@ import {
   toPublicDish,
 } from './dishes.js';
 
-const oats = { calories: 360, protein: 12, fat: 6, carbs: 60, fiber: 10 };
+const oats = { calories: 360, protein: 12, fat: 6, carbs: 60 };
 
 test('validateDish accepts a dish with a name and components', () => {
   const { value, error } = validateDish({
@@ -55,12 +55,23 @@ test('validateDish rejects an invalid component weight', () => {
   assert.match(error, /вес компонента/);
 });
 
+
+test('validateDish rejects a negative fiber value', () => {
+  const { error } = validateDish({
+    name: 'Блюдо',
+    components: [{ name: 'Овсяные хлопья', grams: 50, per100: { ...oats, fiber: -1 } }],
+  });
+
+  assert.match(error, /клетчатки/);
+});
+
 test('computeComponentMacros scales per-100 values to the given weight', () => {
   assert.deepEqual(computeComponentMacros(oats, 50), {
     calories: 180,
     protein: 6,
     fat: 3,
     carbs: 30,
+    fiber: 5,
   });
 });
 
@@ -75,7 +86,6 @@ test('computeTotals sums macros across all components', () => {
     protein: 18,
     fat: 9,
     carbs: 90,
-    fiber: 15,
   });
 });
 
