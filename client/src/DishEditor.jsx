@@ -4,7 +4,7 @@ import { formatValue, scaleMacros, toGrams } from './format.js';
 import { componentFromProduct, computeTotals, dishToPayload } from './dish.js';
 
 function formatFiber(value) {
-  return value == null ? 'н/д' : formatValue(value);
+  return value == null ? 'н/д' : `${formatValue(value)} г`;
 }
 
 export default function DishEditor({ dish, saving, onSave, onCancel }) {
@@ -101,7 +101,7 @@ export default function DishEditor({ dish, saving, onSave, onCancel }) {
               <span>г</span>
             </div>
             <span className="dish-editor__macros">
-              {component.macros ? `${formatValue(component.macros.calories)} ккал · Клетчатка ${formatFiber(component.macros.fiber)} г` : '—'}
+              {component.macros ? `${formatValue(component.macros.calories)} ккал · Клетчатка ${formatFiber(component.macros.fiber)}` : '—'}
             </span>
             <button
               type="button"
@@ -125,7 +125,7 @@ export default function DishEditor({ dish, saving, onSave, onCancel }) {
         <span> · Белки {formatValue(totals.protein)} г</span>
         <span> · Жиры {formatValue(totals.fat)} г</span>
         <span> · Углеводы {formatValue(totals.carbs)} г</span>
-        <span> · Клетчатка {formatFiber(totals.fiber)} г</span>
+        <span> · Клетчатка {formatFiber(totals.fiber)}</span>
       </div>
 
       <footer className="dish-editor__footer">
