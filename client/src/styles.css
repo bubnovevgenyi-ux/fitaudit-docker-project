@@ -354,18 +354,20 @@ button { cursor: pointer; }
 .portion-input-wrap input { width: 100%; min-width: 0; border: 0; outline: 0; color: #314535; background: transparent; font-size: 12px; font-weight: 700; }
 .portion-input-wrap span { color: #889489; font-size: 11px; }
 
-.macro-grid { padding: 20px 27px 22px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 11px; }
+.macro-grid { padding: 20px 27px 22px; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 11px; }
 .macro-card { min-height: 126px; padding: 15px 14px 13px; border: 1px solid transparent; border-radius: 10px; }
 .macro-card--calories { background: #f5f2e9; border-color: #eee8d9; }
 .macro-card--protein { background: #edf4ec; border-color: #e1ebdf; }
 .macro-card--fat { background: #f8f0e8; border-color: #f0e5da; }
 .macro-card--carbs { background: #eef2f7; border-color: #e2e8f0; }
+.macro-card--fiber { background: #f0f1e9; border-color: #e3e6d8; }
 .macro-card__top { display: flex; align-items: center; justify-content: space-between; gap: 5px; }
 .macro-card__label { color: #69736a; font-size: 10px; font-weight: 700; }
 .macro-card__dot { width: 6px; height: 6px; flex: 0 0 auto; border-radius: 50%; background: #b59e65; }
 .macro-card--protein .macro-card__dot { background: #759a72; }
 .macro-card--fat .macro-card__dot { background: #c18b5e; }
 .macro-card--carbs .macro-card__dot { background: #8098b4; }
+.macro-card--fiber .macro-card__dot { background: #8b9b70; }
 .macro-card__value { margin-top: 17px; color: #35483a; font-family: 'Manrope', sans-serif; font-size: clamp(20px, 2.4vw, 27px); font-weight: 800; letter-spacing: -1px; white-space: nowrap; }
 .macro-card__value span { color: #748174; font-family: 'DM Sans', sans-serif; font-size: 11px; font-weight: 500; letter-spacing: 0; }
 .macro-card__description { margin-top: 5px; color: #929a91; font-size: 9px; line-height: 1.4; }
@@ -958,7 +960,7 @@ button { cursor: pointer; }
 .dish-editor__grams span { color: #889489; font-size: 11px; }
 .dish-editor__macros {
   flex: 0 0 auto;
-  min-width: 70px;
+  min-width: 150px;
   color: #4c5f50;
   font-size: 11px;
   font-weight: 700;

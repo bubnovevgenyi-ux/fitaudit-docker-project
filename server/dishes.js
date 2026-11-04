@@ -18,6 +18,7 @@ export function computeComponentMacros(per100, grams) {
     protein: Number(per100.protein) * multiplier,
     fat: Number(per100.fat) * multiplier,
     carbs: Number(per100.carbs) * multiplier,
+    fiber: per100.fiber == null ? null : Number(per100.fiber) * multiplier,
   };
 }
 
@@ -25,18 +26,27 @@ export function computeComponentMacros(per100, grams) {
  * Суммирует КБЖУ всех компонентов блюда.
  */
 export function computeTotals(components) {
-  return components.reduce(
+  const totals = components.reduce(
     (acc, component) => {
       const macros = component.macros || computeComponentMacros(component.per100, component.grams);
-      return {
-        calories: acc.calories + Number(macros.calories || 0),
-        protein: acc.protein + Number(macros.protein || 0),
-        fat: acc.fat + Number(macros.fat || 0),
-        carbs: acc.carbs + Number(macros.carbs || 0),
-      };
+      acc.calories += Number(macros.calories || 0);
+      acc.protein += Number(macros.protein || 0);
+      acc.fat += Number(macros.fat || 0);
+      acc.carbs += Number(macros.carbs || 0);
+      if (macros.fiber == null) acc.fiberAvailable = false;
+      else acc.fiber += Number(macros.fiber);
+      return acc;
     },
-    { calories: 0, protein: 0, fat: 0, carbs: 0 },
+    { calories: 0, protein: 0, fat: 0, carbs: 0, fiber: 0, fiberAvailable: components.length > 0 },
   );
+
+  return {
+    calories: totals.calories,
+    protein: totals.protein,
+    fat: totals.fat,
+    carbs: totals.carbs,
+    fiber: totals.fiberAvailable ? totals.fiber : null,
+  };
 }
 
 /**
@@ -73,6 +83,9 @@ export function validateDish(input) {
     const hasMacros = per100
       && ['calories', 'protein', 'fat', 'carbs'].every((key) => isNonNegativeNumber(per100[key]));
     if (!hasMacros) return { error: `У компонента «${componentName}» нет данных о пищевой ценности.` };
+    if (per100.fiber != null && !isNonNegativeNumber(per100.fiber)) {
+      return { error: `Некорректное значение клетчатки у компонента «${componentName}».` };
+    }
 
     components.push({
       id: raw.id != null ? String(raw.id) : undefined,
@@ -84,6 +97,7 @@ export function validateDish(input) {
         protein: Number(per100.protein),
         fat: Number(per100.fat),
         carbs: Number(per100.carbs),
+        fiber: per100.fiber == null ? null : Number(per100.fiber),
       },
     });
   }

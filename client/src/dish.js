@@ -16,6 +16,7 @@ export function componentFromProduct(product, grams) {
       protein: product.protein,
       fat: product.fat,
       carbs: product.carbs,
+      fiber: product.fiber ?? null,
     },
     macros: scaleMacros(product, grams),
   };
@@ -25,19 +26,31 @@ export function componentFromProduct(product, grams) {
  * Суммирует КБЖУ всех компонентов блюда.
  */
 export function computeTotals(components) {
-  return components.reduce(
+  const totals = components.reduce(
     (acc, component) => {
       const macros = component.macros || (component.per100 ? scaleMacros(component.per100, component.grams) : null);
-      if (!macros) return acc;
-      return {
-        calories: acc.calories + (macros.calories || 0),
-        protein: acc.protein + (macros.protein || 0),
-        fat: acc.fat + (macros.fat || 0),
-        carbs: acc.carbs + (macros.carbs || 0),
-      };
+      if (!macros) {
+        acc.fiberAvailable = false;
+        return acc;
+      }
+      acc.calories += macros.calories || 0;
+      acc.protein += macros.protein || 0;
+      acc.fat += macros.fat || 0;
+      acc.carbs += macros.carbs || 0;
+      if (macros.fiber == null) acc.fiberAvailable = false;
+      else acc.fiber += Number(macros.fiber);
+      return acc;
     },
-    { calories: 0, protein: 0, fat: 0, carbs: 0 },
+    { calories: 0, protein: 0, fat: 0, carbs: 0, fiber: 0, fiberAvailable: components.length > 0 },
   );
+
+  return {
+    calories: totals.calories,
+    protein: totals.protein,
+    fat: totals.fat,
+    carbs: totals.carbs,
+    fiber: totals.fiberAvailable ? totals.fiber : null,
+  };
 }
 
 /**

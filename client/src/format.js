@@ -29,6 +29,7 @@ export function scaleMacros(product, grams) {
     protein: product.protein * multiplier,
     fat: product.fat * multiplier,
     carbs: product.carbs * multiplier,
+    fiber: product.fiber == null ? null : Number(product.fiber) * multiplier,
   };
 }
 
