@@ -37,27 +37,69 @@ export function createApp({
   app.disable('x-powered-by');
   app.use(express.json({ limit: '256kb' }));
 
+  const fiberProductLookups = new Map();
+
+  async function findProductWithFiber(productId) {
+    if (!fiberProductLookups.has(productId)) {
+      const pending = (async () => {
+        let storedProduct = null;
+        try {
+          storedProduct = await productStore.get(productId);
+          if (storedProduct?.fiber != null) return storedProduct;
+        } catch (error) {
+          console.error('[Dishes fiber store lookup]', error.message);
+        }
+
+        const cached = productCache.get(productId);
+        if (cached && Date.now() < cached.expiresAt && cached.item?.fiber != null) {
+          return cached.item;
+        }
+
+        // Обновляем старые записи, которые были сохранены до появления поля fiber.
+        try {
+          const freshProduct = await productLoader(productId);
+          if (freshProduct?.fiber != null) {
+            productCache.set(productId, {
+              item: freshProduct,
+              expiresAt: Date.now() + productTtlMs,
+            });
+            try {
+              await productStore.upsert(freshProduct);
+            } catch (error) {
+              console.error('[Dishes fiber upsert]', error.message);
+            }
+            return freshProduct;
+          }
+        } catch (error) {
+          console.error('[Dishes fiber refresh]', error.message);
+        }
+
+        return storedProduct;
+      })();
+      fiberProductLookups.set(productId, pending);
+    }
+
+    const product = await fiberProductLookups.get(productId);
+    if (product?.fiber == null) fiberProductLookups.delete(productId);
+    return product;
+  }
+
   async function toDishWithCatalogFiber(doc) {
     const dish = toPublicDish(doc);
 
     // Старые избранные блюда сохранялись до добавления fiber в per100.
-    // Восстанавливаем показатель из уже загруженной карточки продукта в MongoDB.
     await Promise.all(dish.components.map(async (component) => {
       if (component.per100?.fiber != null || !component.id) return;
 
-      try {
-        const product = await productStore.get(component.id);
-        if (product?.fiber == null) return;
+      const product = await findProductWithFiber(component.id);
+      if (product?.fiber == null) return;
 
-        const fiberPer100 = Number(product.fiber);
-        component.per100 = { ...component.per100, fiber: fiberPer100 };
-        component.macros = {
-          ...component.macros,
-          fiber: fiberPer100 * Number(component.grams || 0) / 100,
-        };
-      } catch (error) {
-        console.error('[Dishes fiber lookup]', error.message);
-      }
+      const fiberPer100 = Number(product.fiber);
+      component.per100 = { ...component.per100, fiber: fiberPer100 };
+      component.macros = {
+        ...component.macros,
+        fiber: fiberPer100 * Number(component.grams || 0) / 100,
+      };
     }));
 
     dish.totals = computeDishTotals(dish.components);
