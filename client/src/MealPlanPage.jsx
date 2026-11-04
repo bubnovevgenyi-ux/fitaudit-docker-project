@@ -118,10 +118,10 @@ function MealCard({ meal, dishes, selectedId, onSelect }) {
                   <th>Ингредиент</th>
                   <th>Вес, г</th>
                   <th>Ккал</th>
-                  <th>Белки</th>
-                  <th>Жиры</th>
-                  <th>Углеводы</th>
-                  <th>Клетчатка</th>
+                  <th>Белки, г</th>
+                  <th>Жиры, г</th>
+                  <th>Углеводы, г</th>
+                  <th>Клетчатка, г</th>
                 </tr>
               </thead>
               <tbody>
