@@ -2,9 +2,13 @@ import { useEffect, useState } from 'react';
 import Topbar from './Topbar.jsx';
 import HomePage from './HomePage.jsx';
 import FavoritesPage from './FavoritesPage.jsx';
+import CatalogPage from './CatalogPage.jsx';
 
 function readRoute() {
-  return window.location.hash.replace(/^#\/?/, '').startsWith('favorites') ? 'favorites' : 'home';
+  const route = window.location.hash.replace(/^#\/?/, '');
+  if (route === 'favorites') return 'favorites';
+  if (route === 'catalog') return 'catalog';
+  return 'home';
 }
 
 export default function App() {
@@ -17,7 +21,12 @@ export default function App() {
   }, []);
 
   function navigate(nextRoute) {
-    window.location.hash = nextRoute === 'favorites' ? '/favorites' : '/';
+    const hash = nextRoute === 'favorites'
+      ? '/favorites'
+      : nextRoute === 'catalog'
+        ? '/catalog'
+        : '/';
+    window.location.hash = hash;
     setRoute(readRoute());
   }
 
@@ -27,8 +36,15 @@ export default function App() {
         route={route}
         onHome={() => navigate('home')}
         onFavorites={() => navigate('favorites')}
+        onCatalog={() => navigate('catalog')}
       />
-      {route === 'favorites' ? <FavoritesPage /> : <HomePage />}
+      {route === 'favorites' ? (
+        <FavoritesPage />
+      ) : route === 'catalog' ? (
+        <CatalogPage />
+      ) : (
+        <HomePage />
+      )}
     </main>
   );
 }

@@ -68,9 +68,9 @@ class MemoryProductStore {
 
   async list({ query = '', limit = 50, skip = 0 } = {}) {
     const all = [...this.items.values()];
-    const filtered = query
+    const filtered = (query
       ? all.filter((doc) => doc.name.toLowerCase().includes(query.toLowerCase()))
-      : all;
+      : all).sort((left, right) => left.name.localeCompare(right.name, 'ru'));
     return { items: filtered.slice(skip, skip + limit), total: filtered.length };
   }
 
@@ -305,6 +305,27 @@ test('GET /api/catalog returns stored products and supports search', async () =>
     const searchData = await search.json();
     assert.equal(searchData.total, 1);
     assert.equal(searchData.items[0].name, 'Творог 2% жирности');
+  });
+});
+
+
+test('GET /api/catalog returns the requested page and the total number of filtered products', async () => {
+  const store = new MemoryProductStore();
+  await store.upsert({ ...kefirProduct, id: '1', name: 'Творог' });
+  await store.upsert({ ...kefirProduct, id: '2', name: 'Абрикос' });
+  await store.upsert({ ...kefirProduct, id: '3', name: 'Банан' });
+  const app = createApp({ serveClient: false, productStore: store });
+
+  await withServer(app, async (baseUrl) => {
+    const response = await fetch(
+      `${baseUrl}/api/catalog?q=${encodeURIComponent('а')}&limit=1&skip=1`,
+    );
+    assert.equal(response.status, 200);
+    const data = await response.json();
+    assert.equal(data.total, 2);
+    assert.equal(data.items.length, 1);
+    assert.equal(data.items[0].name, 'Банан');
+    assert.equal(data.items[0].id, '3');
   });
 });
 
