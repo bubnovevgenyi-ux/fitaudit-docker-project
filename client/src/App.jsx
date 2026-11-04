@@ -5,7 +5,7 @@ import FavoritesPage from './FavoritesPage.jsx';
 import CatalogPage from './CatalogPage.jsx';
 
 function readRoute() {
-  const route = window.location.hash.replace(/^#\\/?/, '');
+  const route = window.location.hash.replace(/^#\/?/, '');
   if (route === 'favorites') return 'favorites';
   if (route === 'catalog') return 'catalog';
   return 'home';
