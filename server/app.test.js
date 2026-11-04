@@ -84,7 +84,7 @@ const dishComponent = {
   name: 'Кефир',
   grams: 100,
   sourceUrl: 'https://fitaudit.ru/food/190316',
-  per100: { calories: 41, protein: 3.79, fat: 0.93, carbs: 4.48 },
+  per100: { calories: 41, protein: 3.79, fat: 0.93, carbs: 4.48, fiber: 0 },
 };
 
 async function withServer(app, callback) {
@@ -300,6 +300,7 @@ test('GET /api/catalog returns stored products and supports search', async () =>
     const data = await response.json();
     assert.equal(data.total, 2);
     assert.equal(data.items.length, 2);
+    assert.equal(data.items.find((item) => item.id === '190316').fiber, 0);
 
     const search = await fetch(`${baseUrl}/api/catalog?q=${encodeURIComponent('творог')}`);
     const searchData = await search.json();
@@ -377,6 +378,7 @@ test('POST /api/dishes creates a favorite dish and returns its totals', async ()
       protein: 3.79,
       fat: 0.93,
       carbs: 4.48,
+      fiber: 0,
     });
     assert.deepEqual(dish.totals, dish.components[0].macros);
     assert.ok(dish.id);

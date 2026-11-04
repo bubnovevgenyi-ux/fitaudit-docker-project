@@ -168,6 +168,7 @@ export default function IngredientPicker({
             <span>Б {formatValue(preview.protein)} г</span>
             <span>Ж {formatValue(preview.fat)} г</span>
             <span>У {formatValue(preview.carbs)} г</span>
+            <span>Клетчатка {preview.fiber == null ? 'н/д' : `${formatValue(preview.fiber)} г`}</span>
           </div>
           <div className="dish-preview__hint">на {formatValue(numericGrams)} г</div>
         </div>

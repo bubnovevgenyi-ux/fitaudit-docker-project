@@ -52,7 +52,7 @@ export default function CatalogPage() {
         <h1>Каталог продуктов</h1>
         <p>
           Продукты, сохранённые в базе данных приложения. Показатели калорийности,
-          белков, жиров и углеводов приведены на 100 г.
+          белков, жиров, углеводов и клетчатки приведены на 100 г.
         </p>
       </header>
 
@@ -142,6 +142,7 @@ export default function CatalogPage() {
                     <th scope="col">Белки, г</th>
                     <th scope="col">Жиры, г</th>
                     <th scope="col">Углеводы, г</th>
+                    <th scope="col">Клетчатка, г</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -162,6 +163,7 @@ export default function CatalogPage() {
                       <td>{formatMacro(product.protein)}</td>
                       <td>{formatMacro(product.fat)}</td>
                       <td>{formatMacro(product.carbs)}</td>
+                      <td>{formatMacro(product.fiber)}</td>
                     </tr>
                   ))}
                 </tbody>

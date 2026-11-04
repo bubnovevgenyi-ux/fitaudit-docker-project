@@ -34,7 +34,7 @@ export default function HomePage() {
         <div className="hero__eyebrow"><span /> ДАННЫЕ FITAUDIT</div>
         <h1>Знай, что<br /><em>на твоей тарелке.</em></h1>
         <p className="hero__text">
-          Найдите продукт и получите его калорийность и КБЖУ. Значения можно пересчитать
+          Найдите продукт и получите калорийность, КБЖУ и содержание клетчатки. Значения можно пересчитать
           под фактический вес порции.
         </p>
 
@@ -160,6 +160,7 @@ export default function HomePage() {
               <MacroCard label="Белки" value={scaled.protein} unit="г" tone="protein" description="Строительный материал" />
               <MacroCard label="Жиры" value={scaled.fat} unit="г" tone="fat" description="Источник энергии" />
               <MacroCard label="Углеводы" value={scaled.carbs} unit="г" tone="carbs" description="Основной источник энергии" />
+              <MacroCard label="Клетчатка" value={scaled.fiber} unit="г" tone="fiber" description="Пищевые волокна" />
             </div>
             <div className="result-card__footer">
               Расчёт для {formatValue(numericPortion)} г. Исходные показатели получены с FitAudit и указаны на 100 г продукта.
