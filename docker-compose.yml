@@ -1,0 +1,37 @@
+services:
+  mongo:
+    image: mongo:7
+    container_name: fitaudit-mongo
+    restart: unless-stopped
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  fitaudit:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: fitaudit-calculator:latest
+    container_name: fitaudit-calculator
+    restart: unless-stopped
+    init: true
+    ports:
+      - "${APP_PORT:-3001}:3001"
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+      MONGODB_URI: mongodb://mongo:27017
+      MONGODB_DB: fitaudit
+    depends_on:
+      mongo:
+        condition: service_healthy
+    security_opt:
+      - no-new-privileges:true
+
+volumes:
+  mongo-data:
