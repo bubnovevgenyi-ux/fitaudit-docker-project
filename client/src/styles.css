@@ -1158,7 +1158,7 @@ button { cursor: pointer; }
 .catalog-table-wrap { width: 100%; overflow-x: auto; }
 .catalog-table {
   width: 100%;
-  min-width: 650px;
+  min-width: 760px;
   border-collapse: collapse;
   text-align: right;
 }

@@ -7,7 +7,7 @@ import {
   toPublicDish,
 } from './dishes.js';
 
-const oats = { calories: 360, protein: 12, fat: 6, carbs: 60 };
+const oats = { calories: 360, protein: 12, fat: 6, carbs: 60, fiber: 10 };
 
 test('validateDish accepts a dish with a name and components', () => {
   const { value, error } = validateDish({
@@ -86,7 +86,20 @@ test('computeTotals sums macros across all components', () => {
     protein: 18,
     fat: 9,
     carbs: 90,
+    fiber: 15,
   });
+});
+
+
+test('computeTotals reports fiber as unavailable for legacy components without fiber data', () => {
+  const legacyPer100 = { calories: 360, protein: 12, fat: 6, carbs: 60 };
+  const component = {
+    per100: legacyPer100,
+    grams: 100,
+    macros: computeComponentMacros(legacyPer100, 100),
+  };
+
+  assert.equal(computeTotals([component]).fiber, null);
 });
 
 test('toPublicDish serializes a document and recomputes macros and totals', () => {
