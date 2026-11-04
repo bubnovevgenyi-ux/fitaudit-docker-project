@@ -8,7 +8,7 @@ export default function MacroCard({ label, value, unit, tone, description }) {
         <span className="macro-card__dot" aria-hidden="true" />
       </div>
       <div className="macro-card__value">
-        {formatValue(value)} <span>{unit}</span>
+        {value == null ? 'н/д' : <>{formatValue(value)} <span>{unit}</span></>}
       </div>
       <div className="macro-card__description">{description}</div>
     </div>
