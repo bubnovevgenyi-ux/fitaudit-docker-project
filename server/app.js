@@ -3,7 +3,7 @@ import path from 'node:path';
 import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { loadCatalog, loadProductFull, searchCatalog } from './fitaudit.js';
-import { validateDish, toPublicDish } from './dishes.js';
+import { validateDish, toPublicDish, computeTotals as computeDishTotals } from './dishes.js';
 import { MongoDishStore } from './dishStore.js';
 import { toPublicProduct } from './products.js';
 import { MongoProductStore } from './productStore.js';
@@ -36,6 +36,33 @@ export function createApp({
 
   app.disable('x-powered-by');
   app.use(express.json({ limit: '256kb' }));
+
+  async function toDishWithCatalogFiber(doc) {
+    const dish = toPublicDish(doc);
+
+    // Старые избранные блюда сохранялись до добавления fiber в per100.
+    // Восстанавливаем показатель из уже загруженной карточки продукта в MongoDB.
+    await Promise.all(dish.components.map(async (component) => {
+      if (component.per100?.fiber != null || !component.id) return;
+
+      try {
+        const product = await productStore.get(component.id);
+        if (product?.fiber == null) return;
+
+        const fiberPer100 = Number(product.fiber);
+        component.per100 = { ...component.per100, fiber: fiberPer100 };
+        component.macros = {
+          ...component.macros,
+          fiber: fiberPer100 * Number(component.grams || 0) / 100,
+        };
+      } catch (error) {
+        console.error('[Dishes fiber lookup]', error.message);
+      }
+    }));
+
+    dish.totals = computeDishTotals(dish.components);
+    return dish;
+  }
 
   async function getCatalog() {
     if (catalogCache.items && Date.now() < catalogCache.expiresAt) return catalogCache.items;
@@ -156,7 +183,8 @@ export function createApp({
   app.get('/api/dishes', async (_req, res) => {
     try {
       const dishes = await dishStore.list();
-      return res.json({ items: dishes.map(toPublicDish) });
+      const items = await Promise.all(dishes.map(toDishWithCatalogFiber));
+      return res.json({ items });
     } catch (error) {
       console.error('[Dishes list]', error.message);
       return res.status(503).json({ error: DB_ERROR_MESSAGE });
@@ -169,7 +197,7 @@ export function createApp({
 
     try {
       const doc = await dishStore.create(value);
-      return res.status(201).json(toPublicDish(doc));
+      return res.status(201).json(await toDishWithCatalogFiber(doc));
     } catch (dbError) {
       console.error('[Dishes create]', dbError.message);
       return res.status(503).json({ error: DB_ERROR_MESSAGE });
@@ -180,7 +208,7 @@ export function createApp({
     try {
       const doc = await dishStore.get(req.params.id);
       if (!doc) return res.status(404).json({ error: 'Блюдо не найдено.' });
-      return res.json(toPublicDish(doc));
+      return res.json(await toDishWithCatalogFiber(doc));
     } catch (error) {
       console.error('[Dishes get]', error.message);
       return res.status(503).json({ error: DB_ERROR_MESSAGE });

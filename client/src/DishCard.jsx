@@ -1,7 +1,7 @@
 import { formatValue } from './format.js';
 
 function formatFiber(value) {
-  return value == null ? 'н/д' : formatValue(value);
+  return value == null ? 'н/д' : `${formatValue(value)} г`;
 }
 
 export default function DishCard({ dish, onEdit, onDelete }) {
@@ -29,7 +29,7 @@ export default function DishCard({ dish, onEdit, onDelete }) {
           <span>Белки {formatValue(dish.totals.protein)} г</span>
           <span>Жиры {formatValue(dish.totals.fat)} г</span>
           <span>Углеводы {formatValue(dish.totals.carbs)} г</span>
-          <span>Клетчатка {formatFiber(dish.totals.fiber)} г</span>
+          <span>Клетчатка {formatFiber(dish.totals.fiber)}</span>
         </div>
       </div>
 
@@ -45,7 +45,7 @@ export default function DishCard({ dish, onEdit, onDelete }) {
               <span>Б {formatValue(component.macros?.protein)}</span>
               <span>Ж {formatValue(component.macros?.fat)}</span>
               <span>У {formatValue(component.macros?.carbs)}</span>
-              <span>Клетчатка {formatFiber(component.macros?.fiber)} г</span>
+              <span>Клетчатка {formatFiber(component.macros?.fiber)}</span>
             </div>
           </li>
         ))}

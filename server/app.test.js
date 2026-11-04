@@ -414,6 +414,35 @@ test('GET /api/dishes returns saved favorite dishes', async () => {
   });
 });
 
+
+test('GET /api/dishes restores fiber for legacy favorites from the product catalog', async () => {
+  const dishStore = new MemoryDishStore();
+  const productStore = new MemoryProductStore();
+  const legacyPer100 = { calories: 41, protein: 3.79, fat: 0.93, carbs: 4.48 };
+  await dishStore.create({
+    name: 'Кефирная порция',
+    components: [{
+      id: '190316',
+      name: 'Кефир',
+      grams: 50,
+      per100: legacyPer100,
+    }],
+  });
+  await productStore.upsert({ ...kefirProduct, fiber: 2.4 });
+  const app = createApp({ serveClient: false, dishStore, productStore });
+
+  await withServer(app, async (baseUrl) => {
+    const response = await fetch(`${baseUrl}/api/dishes`);
+    assert.equal(response.status, 200);
+    const data = await response.json();
+    const dish = data.items[0];
+
+    assert.equal(dish.components[0].per100.fiber, 2.4);
+    assert.equal(dish.components[0].macros.fiber, 1.2);
+    assert.equal(dish.totals.fiber, 1.2);
+  });
+});
+
 test('PUT /api/dishes updates the name and a component of a dish', async () => {
   const store = new MemoryDishStore();
   const created = await store.create({ name: 'Кефир', components: [dishComponent] });
