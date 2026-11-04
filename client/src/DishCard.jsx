@@ -1,5 +1,9 @@
 import { formatValue } from './format.js';
 
+function formatFiber(value) {
+  return value == null ? 'н/д' : formatValue(value);
+}
+
 export default function DishCard({ dish, onEdit, onDelete }) {
   return (
     <article className="favorite-card">
@@ -25,6 +29,7 @@ export default function DishCard({ dish, onEdit, onDelete }) {
           <span>Белки {formatValue(dish.totals.protein)} г</span>
           <span>Жиры {formatValue(dish.totals.fat)} г</span>
           <span>Углеводы {formatValue(dish.totals.carbs)} г</span>
+          <span>Клетчатка {formatFiber(dish.totals.fiber)} г</span>
         </div>
       </div>
 
@@ -40,6 +45,7 @@ export default function DishCard({ dish, onEdit, onDelete }) {
               <span>Б {formatValue(component.macros?.protein)}</span>
               <span>Ж {formatValue(component.macros?.fat)}</span>
               <span>У {formatValue(component.macros?.carbs)}</span>
+              <span>Клетчатка {formatFiber(component.macros?.fiber)} г</span>
             </div>
           </li>
         ))}

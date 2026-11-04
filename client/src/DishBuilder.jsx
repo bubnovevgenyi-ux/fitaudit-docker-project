@@ -4,6 +4,10 @@ import { formatValue } from './format.js';
 import { componentFromProduct, computeTotals, dishToPayload } from './dish.js';
 import { createDish } from './api.js';
 
+function formatFiber(value) {
+  return value == null ? 'н/д' : formatValue(value);
+}
+
 export default function DishBuilder() {
   const [components, setComponents] = useState([]);
   const [dishName, setDishName] = useState('');
@@ -76,6 +80,7 @@ export default function DishBuilder() {
                   <span>Б {formatValue(component.macros.protein)}</span>
                   <span>Ж {formatValue(component.macros.fat)}</span>
                   <span>У {formatValue(component.macros.carbs)}</span>
+                  <span>Клетчатка {formatFiber(component.macros.fiber)} г</span>
                 </div>
                 <button
                   type="button"
@@ -95,6 +100,7 @@ export default function DishBuilder() {
               <span>Белки {formatValue(totals.protein)} г</span>
               <span>Жиры {formatValue(totals.fat)} г</span>
               <span>Углеводы {formatValue(totals.carbs)} г</span>
+              <span>Клетчатка {formatFiber(totals.fiber)} г</span>
             </div>
           </div>
 
