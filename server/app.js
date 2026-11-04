@@ -113,8 +113,14 @@ export function createApp({
 
   app.get('/api/catalog', async (req, res) => {
     const query = String(req.query.q || '').trim();
-    const limit = Math.max(1, Math.min(Number(req.query.limit) || 50, 500));
-    const skip = Math.max(0, Number(req.query.skip) || 0);
+    const requestedLimit = Number(req.query.limit);
+    const requestedSkip = Number(req.query.skip);
+    const limit = Number.isFinite(requestedLimit)
+      ? Math.max(1, Math.min(Math.trunc(requestedLimit) || 1, 500))
+      : 50;
+    const skip = Number.isFinite(requestedSkip)
+      ? Math.max(0, Math.trunc(requestedSkip))
+      : 0;
 
     try {
       const { items, total } = await productStore.list({ query, limit, skip });
