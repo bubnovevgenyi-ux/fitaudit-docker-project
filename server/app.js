@@ -222,7 +222,7 @@ export function createApp({
     try {
       const doc = await dishStore.update(req.params.id, value);
       if (!doc) return res.status(404).json({ error: 'Блюдо не найдено.' });
-      return res.json(toPublicDish(doc));
+      return res.json(await toDishWithCatalogFiber(doc));
     } catch (dbError) {
       console.error('[Dishes update]', dbError.message);
       return res.status(503).json({ error: DB_ERROR_MESSAGE });
