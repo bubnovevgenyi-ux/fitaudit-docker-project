@@ -443,6 +443,44 @@ test('GET /api/dishes restores fiber for legacy favorites from the product catal
   });
 });
 
+
+test('GET /api/dishes refreshes missing legacy fiber from FitAudit and saves it to Mongo store', async () => {
+  const dishStore = new MemoryDishStore();
+  const productStore = new MemoryProductStore();
+  const legacyPer100 = { calories: 41, protein: 3.79, fat: 0.93, carbs: 4.48 };
+  await dishStore.create({
+    name: 'Кефирная порция',
+    components: [{
+      id: '190316',
+      name: 'Кефир',
+      grams: 50,
+      per100: legacyPer100,
+    }],
+  });
+  let productLoadCount = 0;
+  const app = createApp({
+    serveClient: false,
+    dishStore,
+    productStore,
+    productLoader: async (id) => {
+      productLoadCount += 1;
+      return { ...kefirProduct, id, fiber: 3.6 };
+    },
+  });
+
+  await withServer(app, async (baseUrl) => {
+    const response = await fetch(`${baseUrl}/api/dishes`);
+    assert.equal(response.status, 200);
+    const dish = (await response.json()).items[0];
+
+    assert.equal(dish.components[0].per100.fiber, 3.6);
+    assert.equal(dish.components[0].macros.fiber, 1.8);
+    assert.equal(dish.totals.fiber, 1.8);
+    assert.equal((await productStore.get('190316')).fiber, 3.6);
+    assert.equal(productLoadCount, 1);
+  });
+});
+
 test('PUT /api/dishes updates the name and a component of a dish', async () => {
   const store = new MemoryDishStore();
   const created = await store.create({ name: 'Кефир', components: [dishComponent] });
