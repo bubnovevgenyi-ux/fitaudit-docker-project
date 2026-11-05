@@ -9,7 +9,7 @@ import DishBuilder from './DishBuilder.jsx';
 function readRoute() {
   let pathname = window.location.pathname.replace(/\/+$/, '') || '/';
 
-  // Совместимость со старыми закладками вида /#/catalog и /#/favorites.
+  // Совместимость со старыми hash-ссылками на страницы приложения.
   if (pathname === '/' && window.location.hash.startsWith('#/')) {
     const legacyPath = window.location.hash.slice(1).split('?')[0];
     const canonicalPath = ['/catalog', '/favorites', '/meal-plan', '/dish-builder'].includes(legacyPath) ? legacyPath : '/';
