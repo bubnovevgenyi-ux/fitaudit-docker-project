@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useProductLookup } from './useProductLookup.js';
 import MacroCard from './MacroCard.jsx';
-import DishBuilder from './DishBuilder.jsx';
 import { formatValue, scaleMacros, toGrams } from './format.js';
 
 export default function HomePage() {
@@ -180,8 +179,6 @@ export default function HomePage() {
           </div>
         )}
       </section>
-
-      <DishBuilder />
 
       <footer className="page-footer">
         <span>Источник пищевой ценности: <a href="https://fitaudit.ru/" target="_blank" rel="noreferrer">FitAudit</a></span>

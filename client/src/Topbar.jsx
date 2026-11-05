@@ -1,4 +1,4 @@
-export default function Topbar({ route, onHome, onFavorites, onCatalog, onMealPlan }) {
+export default function Topbar({ route, onHome, onFavorites, onCatalog, onMealPlan, onDishBuilder }) {
   return (
     <header className="topbar">
       <a className="brand" href="https://fitaudit.ru/" target="_blank" rel="noreferrer">
@@ -16,6 +16,9 @@ export default function Topbar({ route, onHome, onFavorites, onCatalog, onMealPl
             </button>
             <button className="topbar-nav topbar-nav--meal-plan" type="button" onClick={onMealPlan}>
               План питания
+            </button>
+            <button className="topbar-nav topbar-nav--dish-builder" type="button" onClick={onDishBuilder}>
+              Сборка блюда
             </button>
           </>
         ) : (
