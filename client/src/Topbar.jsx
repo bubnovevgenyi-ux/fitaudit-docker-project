@@ -1,7 +1,7 @@
 export default function Topbar({ route, onHome, onFavorites, onCatalog, onMealPlan, onDishBuilder }) {
   return (
     <header className="topbar">
-      <a className="brand" href="https://fitaudit.ru/" target="_blank" rel="noreferrer">
+      <a className="brand" href="/" aria-label="Перейти на главную страницу" title="Главная страница">
         <span className="brand__mark" aria-hidden="true">f</span>
         <span>food<span className="brand__muted">calc</span></span>
       </a>
