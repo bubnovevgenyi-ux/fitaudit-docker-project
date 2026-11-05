@@ -4,6 +4,7 @@ import HomePage from './HomePage.jsx';
 import FavoritesPage from './FavoritesPage.jsx';
 import CatalogPage from './CatalogPage.jsx';
 import MealPlanPage from './MealPlanPage.jsx';
+import DishBuilder from './DishBuilder.jsx';
 
 function readRoute() {
   let pathname = window.location.pathname.replace(/\/+$/, '') || '/';
@@ -11,7 +12,7 @@ function readRoute() {
   // Совместимость со старыми закладками вида /#/catalog и /#/favorites.
   if (pathname === '/' && window.location.hash.startsWith('#/')) {
     const legacyPath = window.location.hash.slice(1).split('?')[0];
-    const canonicalPath = ['/catalog', '/favorites', '/meal-plan'].includes(legacyPath) ? legacyPath : '/';
+    const canonicalPath = ['/catalog', '/favorites', '/meal-plan', '/dish-builder'].includes(legacyPath) ? legacyPath : '/';
     window.history.replaceState({}, '', `${canonicalPath}${window.location.search}`);
     pathname = canonicalPath;
   }
@@ -19,6 +20,7 @@ function readRoute() {
   if (pathname === '/favorites') return 'favorites';
   if (pathname === '/catalog') return 'catalog';
   if (pathname === '/meal-plan') return 'meal-plan';
+  if (pathname === '/dish-builder') return 'dish-builder';
   return 'home';
 }
 
@@ -26,6 +28,7 @@ function routePath(route) {
   if (route === 'favorites') return '/favorites';
   if (route === 'catalog') return '/catalog';
   if (route === 'meal-plan') return '/meal-plan';
+  if (route === 'dish-builder') return '/dish-builder';
   return '/';
 }
 
@@ -54,6 +57,7 @@ export default function App() {
         onFavorites={() => navigate('favorites')}
         onCatalog={() => navigate('catalog')}
         onMealPlan={() => navigate('meal-plan')}
+        onDishBuilder={() => navigate('dish-builder')}
       />
       {route === 'favorites' ? (
         <FavoritesPage />
@@ -61,6 +65,8 @@ export default function App() {
         <CatalogPage />
       ) : route === 'meal-plan' ? (
         <MealPlanPage />
+      ) : route === 'dish-builder' ? (
+        <DishBuilder />
       ) : (
         <HomePage />
       )}
